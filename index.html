@@ -102,22 +102,58 @@ footer{
   text-align:center;
   background:black;
 }
-</style>
+<style>
+
+/* ✅ ADD HERE */
+
+.card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.card p {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #333;
+  }
+  .card span {
+  display: block;
+  margin-top: 5px;
+  color: green;
+  font-size: 16px;
+  font-weight: bold;
+  }
+  /* ADD THIS BELOW 👇 */
+.card button {
+  margin-top: 10px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 20px;
+  background: #ff6600;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.card button:hover {
+  background: black;
+}
+
+  
+.card {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+    </style>
 </head>
 
-<body>premium_photo-1663855531852-36f2b217faa8.jpeg
-photo-1683533746199-9e3920bf3eab.jpeg
-  photo-1589302168068-964664d93dc0.jpeg
-Screenshot_20260323-224211_Maps.jpg
-  photo-1575526854473-e85fdba07b7a.jpeg
-  file_0000000079bc71faa46826adf4f890b9.png
-  Screenshot_20260323-224144_Maps.jpg
-  Screenshot_20260323-224156_Maps.jpg
-  Screenshot_20260323-224130_Maps.jpg
-  Screenshot_20260323-224106_Maps.jpg
+<body> 
   
 <nav>
-  <h1>🍽️ welcome to our Navarasa Dhaba</h1>
+  <h1>🍽️ Welcome to Navarasa Family Dhaba</h1>
 </nav>
 
 <!-- HERO -->
@@ -125,8 +161,8 @@ Screenshot_20260323-224211_Maps.jpg
   <h2>Navarasa Family Dhaba</h2>
   <p>Indian • Chinese • Tandoor • Veg & Non-Veg</p>
 
-  <a href="tel:+91XXXXXXXXXX" class="btn">📞 Call</a>
-  <a href="https://wa.me/91XXXXXXXXXX" class="btn">💬 WhatsApp</a>
+  <a href="tel:+919985432742" class="btn">📞 Call</a>
+  <a href="https://wa.me/919985432742" class="btn">💬 WhatsApp</a>
 </section>
 
 <!-- ABOUT -->
@@ -150,27 +186,55 @@ Screenshot_20260323-224211_Maps.jpg
 
 <!-- MENU -->
 <section class="section">
-  <h2>🍛 Our Menu</h2>
+  <h2>🍽️ Our Menu</h2>
 
   <div class="menu">
-    <div class="card">Chicken Biryani</div>
-    <div class="card">Tandoori Chicken</div>
-    <div class="card">Veg Meals</div>
-    <div class="card">Fried Rice</div>
-    <div class="card">Noodles</div>
-    <div class="card">Chapati & Curry</div>
+
+    <div class="card">
+      <p>Chicken Biryani</p>
+      <span>₹150</span>
+      <a href="https://wa.me/919985432742?text=I want Chicken Biryani" target="_blank">
+        <button>Order Now</button>
+      </a>
+    </div>
+
+    <div class="card">
+      <p>Tandoori Chicken</p>
+      <span>₹220</span>
+      <a href="https://wa.me/919985432742?text=I want Tandoori Chicken" target="_blank">
+        <button>Order Now</button>
+      </a>
+    </div>
+
+    <div class="card">
+      <p>Veg Meals</p>
+      <span>₹120</span>
+      <a href="https://wa.me/919985432742?text=I want Veg Meals" target="_blank">
+        <button>Order Now</button>
+      </a>
+    </div>
+
+    <div class="card">
+      <p>Fried Rice</p>
+      <span>₹130</span>
+      <a href="https://wa.me/919985432742?text=I want Fried Rice" target="_blank">
+        <button>Order Now</button>
+      </a>
+    </div>
+
   </div>
 </section>
+
 
 <!-- GALLERY -->
 <section class="section">
   <h2>📸 Food Gallery</h2>
 
   <div class="gallery">
-    <img src="https://source.unsplash.com/400x300/?biryani">
-    <img src="https://source.unsplash.com/400x300/?tandoori">
-    <img src="https://source.unsplash.com/400x300/?indian-food">
-    <img src="https://source.unsplash.com/400x300/?noodles">
+    <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d" alt="Biryani" width="100%">
+<img src="https://images.unsplash.com/photo-1601050690597-df0568f70950" alt="Tandoori" width="100%">
+<img src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc" alt="Indian Food" width="100%">
+<img src="https://images.unsplash.com/photo-1585032226651-759b368d7246" alt="Noodles" width="100%">
   </div>
 </section>
 
