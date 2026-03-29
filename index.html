@@ -1,1 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navarasa Dhaba</title>
 
+<style>
+body { margin:0; font-family:Arial; background:#111; color:white; }
+
+header {
+  background:#e23744;
+  padding:15px;
+  text-align:center;
+  font-size:22px;
+}
+
+.search { padding:10px; text-align:center; }
+.search input {
+  width:80%; padding:10px; border-radius:10px; border:none;
+}
+
+.filters { text-align:center; padding:10px; }
+.filters button {
+  margin:5px; padding:8px;
+  border:none; border-radius:10px;
+  background:#333; color:white;
+}
+
+.menu {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:15px; padding:15px;
+}
+
+.card {
+  background:#1c1c1c;
+  border-radius:15px;
+  overflow:hidden;
+}
+
+.card img {
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  cursor:pointer;
+}
+
+.card-body { padding:10px; }
+.price { color:gold; }
+.rating { color:lightgreen; }
+
+.add-btn {
+  background:#e23744;
+  padding:8px;
+  border-radius:10px;
+  text-align:center;
+  margin-top:5px;
+  cursor:pointer;
+}
+
+.cart {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#222;
+  padding:10px;
+  text-align:center;
+}
+
+.checkout {
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:#000c;
+  text-align:center;
+  padding-top:50px;
+}
+
+/* IMAGE POPUP */
+#imgPopup {
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.9);
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+#imgPopup img { width:300px; border-radius:15px; }
+
+/* ADMIN */
+#adminPanel {
+  display:none;
+  position:fixed;
+  top:0; right:0;
+  width:300px; height:100%;
+  background:#222;
+  padding:20px;
+  z-index:1000;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>🍽️ Navarasa Family Dhaba</header>
+
+<div class="search">
+  <input type="text" id="searchInput" placeholder="Search food...">
+</div>
+
+<div class="filters">
+  <button onclick="filterMenu('all')">All</button>
+  <button onclick="filterMenu('veg')">Veg</button>
+  <button onclick="filterMenu('nonveg')">Non-Veg</button>
+</div>
+
+<div class="menu" id="menu"></div>
+
+<div class="cart" id="cart">
+  Cart: ₹0 | 0 items (Click to Checkout)
+</div>
+
+<!-- CHECKOUT -->
+<div class="checkout" id="checkout">
+  <h2>🧾 Order Summary</h2>
+  <p id="summary"></p>
+  <button onclick="cod()">💵 COD</button>
+  <button onclick="upi()">📲 UPI</button><br><br>
+  <button onclick="closeCheckout()">Close</button>
+</div>
+
+<!-- IMAGE POPUP -->
+<div id="imgPopup">
+  <div>
+    <img id="popupImg"><br><br>
+    <button onclick="closeImg()">Close</button>
+  </div>
+</div>
+
+<!-- ADMIN BUTTON -->
+<div style="position:fixed;top:10px;right:10px;">
+  <button onclick="toggleAdmin()">⚙️</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+<h3>Add Item</h3>
+<input id="name" placeholder="Food Name"><br><br>
+<input id="price" placeholder="Price"><br><br>
+<input id="img" placeholder="Image URL"><br><br>
+
+<select id="category">
+<option value="veg">Veg</option>
+<option value="nonveg">Non-Veg</option>
+</select><br><br>
+
+<button onclick="addFood()">Add</button>
+
+<hr>
+
+<h3>UPI Settings</h3>
+<input id="upiInput" placeholder="Enter UPI ID"><br><br>
+<button onclick="saveUPI()">Save UPI</button>
+
+<br><br>
+<button onclick="toggleAdmin()">Close</button>
+</div>
+
+<script>
+
+// LOAD FOODS
+let foods = JSON.parse(localStorage.getItem("foods")) || [
+ {name:"Chicken Biryani",price:150,category:"nonveg",rating:"4.8⭐",img:"https://images.unsplash.com/photo-1604908176997-431a4c69cb59"},
+ {name:"Tandoori Chicken",price:220,category:"nonveg",rating:"4.7⭐",img:"https://images.unsplash.com/photo-1603898037225-1b8b5e6c6f7c"},
+ {name:"Veg Meals",price:120,category:"veg",rating:"4.2⭐",img:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c"},
+ {name:"Fried Rice",price:130,category:"veg",rating:"4.3⭐",img:"https://images.unsplash.com/photo-1603133872878-684f208fb84b"}
+];
+
+// LOAD UPI
+let savedUPI = localStorage.getItem("upiID") || "raju@ybl";
+
+let total=0, count=0, order=[];
+
+const menu=document.getElementById("menu");
+
+function displayMenu(list){
+ menu.innerHTML="";
+ list.forEach((food,i)=>{
+  menu.innerHTML+=`
+  <div class="card">
+   <img src="${food.img}" onclick="openImg('${food.img}')">
+   <div class="card-body">
+    <h3>${food.name}</h3>
+    <div class="rating">${food.rating}</div>
+    <div class="price">₹${food.price}</div>
+    <div class="add-btn" onclick="addToCart(${i})">Add</div>
+   </div>
+  </div>`;
+ });
+}
+
+displayMenu(foods);
+
+// CART
+function addToCart(i){
+ total+=foods[i].price;
+ count++;
+ order.push(foods[i].name);
+
+ document.getElementById("cart").innerText=
+ "Cart: ₹"+total+" | "+count+" items";
+
+ document.getElementById("summary").innerText=
+ order.join(", ")+" | ₹"+total;
+}
+
+// FILTER
+function filterMenu(type){
+ if(type==="all") displayMenu(foods);
+ else displayMenu(foods.filter(f=>f.category===type));
+}
+
+// SEARCH
+document.getElementById("searchInput").addEventListener("input",function(){
+ let v=this.value.toLowerCase();
+ displayMenu(foods.filter(f=>f.name.toLowerCase().includes(v)));
+});
+
+// CHECKOUT
+document.getElementById("cart").onclick=()=>{
+ document.getElementById("checkout").style.display="block";
+};
+
+function closeCheckout(){
+ document.getElementById("checkout").style.display="none";
+}
+
+// COD
+function cod(){
+ window.open(
+ "https://wa.me/919985432742?text=Order:"+order.join(", ")+" ₹"+total+" COD",
+ "_blank");
+}
+
+// UPI PAYMENT
+function upi(){
+ if(total === 0){
+  alert("Cart is empty!");
+  return;
+ }
+
+ let name="Navarasa Dhaba";
+
+ window.location.href =
+  "upi://pay?pa=" + savedUPI +
+  "&pn=" + name +
+  "&am=" + total +
+  "&cu=INR";
+}
+
+// SAVE UPI
+function saveUPI(){
+ const upi = document.getElementById("upiInput").value;
+
+ if(!upi){
+  alert("Enter UPI ID");
+  return;
+ }
+
+ localStorage.setItem("upiID", upi);
+ savedUPI = upi;
+
+ alert("UPI Updated ✅");
+}
+
+// IMAGE POPUP
+function openImg(src){
+ document.getElementById("imgPopup").style.display="flex";
+ document.getElementById("popupImg").src=src;
+}
+function closeImg(){
+ document.getElementById("imgPopup").style.display="none";
+}
+
+// ADMIN PANEL
+function toggleAdmin(){
+ let p=document.getElementById("adminPanel");
+ p.style.display=(p.style.display==="block")?"none":"block";
+}
+
+function addFood(){
+ let n=document.getElementById("name").value;
+ let p=document.getElementById("price").value;
+ let i=document.getElementById("img").value;
+ let c=document.getElementById("category").value;
+
+ if(!n||!p||!i){ alert("Fill all"); return; }
+
+ let newyFood={name:n,price:+p,category:c,rating:"4.5⭐",img:i};
+ foods.push(newFood);
+
+ localStorage.setItem("foods",JSON.stringify(foods));
+ displayMenu(foods);
+
+ alert("Item Added ✅");
+}
+
+</script>
+
+</body>
+      </html>
